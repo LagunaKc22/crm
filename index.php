@@ -3,7 +3,12 @@ session_start();
 include "conn.php";
 
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    header("Location: admin/dashboard.php"); 
+    if($_SESSION['usertype'] === 'admin'){
+        header("Location: admin/dashboard.php"); 
+    }else{
+        header("Location: user/dashboard.php");
+    }
+    
     exit();
 }
 
@@ -37,11 +42,15 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
             $_SESSION['username'] = $acc['username'];
             $_SESSION['fname'] = $acc['fname'];
             $_SESSION['lname'] = $acc['lname'];
+            $_SESSION['usertype'] = $acc['user_type'];
 
            
-           
-            header("Location: admin/dashboard.php");
-            exit();
+            if($acc['user_type'] === 'admin'){
+                header('location: admin/dashboard.php');
+            }else{
+                header("Location: user/dashboard.php");
+            }
+             exit();
         } else {
             echo "Invalid username or password.";
         }
