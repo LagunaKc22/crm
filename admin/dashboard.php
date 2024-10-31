@@ -1,10 +1,7 @@
-<?php include '../tailwind.php';
+<?php 
+include '../tailwind.php';
+include '../session/admin_session.php';
 
-session_start();
-if(!isset($_SESSION['username']) || $_SESSION['username'] == !true){
-    header("location: index.php");
-    exit();
-}
 ?>
 <?php include './../components/topnav.php';?>
 <?php include './../components/sidenav.php'; ?>
