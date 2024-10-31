@@ -25,6 +25,7 @@
 <p>Already have an account? Please click <a href="index.php">here</a> to login.</p>
 <?php include "html_struc/html_footer.php"; ?>
 
+
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fname = $_POST['fname'];
