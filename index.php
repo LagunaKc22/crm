@@ -3,7 +3,7 @@ session_start();
 include "conn.php";
 
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    header("Location: pages/dashboard.php"); 
+    header("Location: admin/dashboard.php"); 
     exit();
 }
 
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 
            
            
-            header("Location: pages/dashboard.php");
+            header("Location: admin/dashboard.php");
             exit();
         } else {
             echo "Invalid username or password.";
