@@ -11,6 +11,8 @@
         <label for="">Contact</label><br>
         <input type="text" name="contact" required><br><br>
         <hr>
+        <label for="">User Type</label><br>
+        <input type="text" name="usertype" required><br><br>
         <label for="">Username</label><br>
         <input type="text" name="user" required><br><br>
         <label for="">Password</label><br>
@@ -28,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fname = $_POST['fname'];
     $lname = $_POST['lname'];
     $contact = $_POST['contact'];
+    $usertype = $_POST['usertype'];
     $user = $_POST['user'];
     $pass = $_POST['pass'];
     $confirm_pass = $_POST['confirm_pass'];
@@ -53,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Hash the password and insert the new user
     $hash_password = password_hash($pass, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO users (username, password, fname, lname, contact) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (username, password, user_type, fname, lname, contact) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssss", $user, $hash_password, $fname, $lname, $contact);
+    $stmt->bind_param("ssssss", $user, $hash_password, $usertype,  $fname, $lname, $contact);
 
     if ($stmt->execute()) {
         echo "Registration successful!";
