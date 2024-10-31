@@ -1,6 +1,6 @@
 <?php
 
-
+    include 'tailwind.php';
     session_start();
     if(!isset($_SESSION['username']) || $_SESSION['username'] == !true){
         header("location: index.php");
@@ -14,20 +14,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Dashboard</title>
 </head>
 <body>
+
+<?php include 'components/topnav.php'; ?>
+<?php include 'components/sidenav.php'; ?>
+
+
     <?php echo $_SESSION["username"]; ?>
     <a href="logout.php">Logout</a>
 
-    <div class="grid-container">
-
-        <div class="con container-0">0</div>
-        <div class="con container-1">1</div>
-        <div class="con container-2">2</div>
-        <div class="con container-3">3</div>
-        <div class="con container-4">4</div>
-    </div>
+    
 </body>
 </html>
 
