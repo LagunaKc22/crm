@@ -1,10 +1,9 @@
 <?php
-session_start(); // Start the session
-include "conn.php"; // Ensure this is correct
+session_start(); 
+include "conn.php";
 
-// Check if the user is already logged in
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    header("Location: home.php"); // Redirect to home page if logged in
+    header("Location: pages/dashboard.php"); 
     exit();
 }
 
@@ -12,11 +11,11 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $user = $_POST['user'];
     $pass = $_POST['pass'];
 
-    // Prepare a statement to prevent SQL injection
+    
     $sql = "SELECT * FROM users WHERE username = ?";
     $stmt = $conn->prepare($sql);
     
-    // Check if statement preparation failed
+   
     if (!$stmt) {
         die("Prepare failed: " . $conn->error);
     }
@@ -25,22 +24,23 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Check if the user was found
+
     if ($result->num_rows === 0) {
         echo "No user found with that username.";
     } else {
         $acc = $result->fetch_assoc();
 
-        // Verify the password
+
         if (password_verify($pass, $acc['password'])) {
-            // Set session variables upon successful login
+          
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $acc['username'];
             $_SESSION['fname'] = $acc['fname'];
             $_SESSION['lname'] = $acc['lname'];
 
-            // Redirect to the home page
-            header("Location: home.php");
+           
+           
+            header("Location: pages/dashboard.php");
             exit();
         } else {
             echo "Invalid username or password.";
