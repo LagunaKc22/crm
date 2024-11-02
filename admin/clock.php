@@ -68,7 +68,7 @@
                echo '<br> You choosed Break End';
             break;
          case 'tout':
-            date_default_timezone_set("Asia/Manila");
+               date_default_timezone_set("Asia/Manila");
                $current = date("Y-m-d H:i:s");
 
                $record = "UPDATE time_record SET time_out = ? WHERE id = '1'";
@@ -78,11 +78,45 @@
 
                $dateTime = new DateTime($current);
                $formatted = $dateTime->format('g:i A');
-         
+               $current = date("Y-m-d H:i:s");
                echo $formatted;
                echo '<br> You choosed Time out';
+           
             break;
       }
+        
+         $in = $user['time_in'];
+         $out = $user['time_out'];
+         
+         $time_in = new DateTime($in);
+         $time_out = new DateTime( $out);
+         
+         $formattedIn = $time_in->format('g:i A');
+         $formattedOut = $time_out->format('g:i A');
+
+
+
+         $interval = $time_in->diff($time_out);
+
+         
+         $totalTime = ($interval->h + ($interval->days * 24)) . 'hrs ' . $interval->i . 'min';
+         $hours = $interval->h + ($interval->days * 24);
+         $minutes = $interval->i;
+         
+         echo "<br><br>";
+         echo "In: " . $formattedIn . "<br>";
+         echo "Out: " . $formattedOut . "<br>";
+
+         echo "Total Time ".$totalTime . "<br>";
+
+               $records = "UPDATE time_record SET totaltime = ? WHERE id = '1'";
+               $stmt = $conn->prepare($records);
+               $stmt->bind_param("s", $totalTime);
+               $stmt->execute();
+         // echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min";
+
+        
+
    }
    // if($_SERVER['REQUEST_METHOD'] === 'POST') {
    //    $timestring = $_POST['time'];
@@ -112,8 +146,11 @@
       <button name = "val" value="bend">End</button>
       <button name = "val" value="tout">Out</button>
       <br><br>
-      <h3><?php echo $user['time_in']; ?></h3>
+      <!-- <h3><?php #echo $user['time_in']; ?></h3> -->
+      <h3><?php  echo "Total Time ".$totalTime ?></h3>
+      <h3><?php  echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min"; ?></h3>
       <h3><?php echo $dbformatted; ?></h3>
+      <h3><?php echo $current; ?></h3>
    </form>
 </body>
 </html>
