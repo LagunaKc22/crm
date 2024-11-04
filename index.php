@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
           
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $acc['username'];
+            // $_SESSION['id'] = $acc['id'];
             $_SESSION['fname'] = $acc['fname'];
             $_SESSION['lname'] = $acc['lname'];
             $_SESSION['usertype'] = $acc['user_type'];
