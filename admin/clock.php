@@ -15,7 +15,7 @@
 
    $dbtime = $user['time_in'];
    $time = new DateTime($dbtime);
-   $dbformatted = $time->format('g:i A');
+   $dbformatted = $time->format(format: 'g:i A');
 
 
    if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -102,12 +102,29 @@
          $totalTime = ($interval->h + ($interval->days * 24)) . 'hrs ' . $interval->i . 'min';
          $hours = $interval->h + ($interval->days * 24);
          $minutes = $interval->i;
+
+         $days = floor($hours / 24);
+         $remainingHours = $hours % 24;
+
+         $remainingMinutes = $minutes;
+
+         echo "<br><br>";
          
+         echo "$days days $remainingHours hours $remainingMinutes mins";
+
+         echo "<br><br>";
+         
+         echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min";
          echo "<br><br>";
          echo "In: " . $formattedIn . "<br>";
          echo "Out: " . $formattedOut . "<br>";
 
          echo "Total Time ".$totalTime . "<br>";
+      
+
+
+
+
 
                $records = "UPDATE time_record SET totaltime = ? WHERE id = '1'";
                $stmt = $conn->prepare($records);
@@ -128,18 +145,21 @@
    // }
    //    date_default_timezone_set("Asia/Manila");
    //    $current = date("Y-m-d H:i:s");
+
+         // header("location:clock.php");
+         // exit();
    
    ?>
 
 
-   <form  method="post">
+   <form action ="<?php $_SERVER['PHP_SELF']; ?>" method="post">
       <!-- <input type="text" name="time" value="<?php #echo $user['created_at'] ?>"> -->
       <!-- <input type="text" name="time" value="<?php #echo $current; ?>"> -->
-<!--       
+      <!--       
       <input type="submit" name="val" value="Time In" >
       <input type="submit" name="val" value="Break Start" >
       <input type="submit" name="val" value="Break End" >
-      <input type="submit" name="val" value="Time Out" > -->
+      <input type="submit" name="val" value="Time Out" >-->
 
       <button name = "val" value="tin">IN</button>
       <button name = "val" value="bstart">Start</button>
@@ -147,10 +167,10 @@
       <button name = "val" value="tout">Out</button>
       <br><br>
       <!-- <h3><?php #echo $user['time_in']; ?></h3> -->
-      <h3><?php  echo "Total Time ".$totalTime ?></h3>
-      <h3><?php  echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min"; ?></h3>
-      <h3><?php echo $dbformatted; ?></h3>
-      <h3><?php echo $current; ?></h3>
+      <h3><?php #echo "Total Time ".$totalTime ?></h3>
+      <h3><?php #echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min"; ?></h3>
+      <h3><?php #echo $dbformatted; ?></h3>
+      <h3><?php #echo $current; ?></h3>
    </form>
 </body>
 </html>
