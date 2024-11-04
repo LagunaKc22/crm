@@ -1,6 +1,22 @@
 
+<?php 
+   include '../conn.php';
+   include '../session/admin_session.php';
+   
+   $id =  $_SESSION['id'];
+   $fname = $_SESSION['fname'];
+   $lname = $_SESSION['lname'];
+   
+   echo $id;
+   $fullname = $fname . " " . $lname;
+   echo $fullname;
 
+  
+
+
+?>
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
    <meta charset="UTF-8">
@@ -9,13 +25,15 @@
 </head>
 <body>
    <?php
-   include '../conn.php';
-   $result = $conn->query("SELECT * FROM time_record WHERE id = '1'");
-   $user = $result->fetch_assoc();
+    $result = $conn->query("SELECT * FROM time_records WHERE user_id = $id");
+      $data = $result->fetch_assoc();
+   // $result = $conn->query("SELECT * FROM time_records WHERE user_id = $id");
+   
+   
 
-   $dbtime = $user['time_in'];
-   $time = new DateTime($dbtime);
-   $dbformatted = $time->format(format: 'g:i A');
+   // $dbtime = $user['time_in'];
+   // $time = new DateTime($dbtime);
+   // $dbformatted = $time->format(format: 'g:i A');
 
 
    if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -25,9 +43,9 @@
                date_default_timezone_set("Asia/Manila");
                $current = date("Y-m-d H:i:s");
 
-               $record = 'INSERT INTO time_record (time_in) VALUES (?)';
+               $record = 'INSERT INTO time_records (user_id,fullname,  time_in) VALUES (?,?,?)';
                $stmt = $conn->prepare($record);
-               $stmt->bind_param("s", $current);
+               $stmt->bind_param("sss", $id, $fullname, $current);
                $stmt->execute();
 
                $dateTime = new DateTime($current);
@@ -41,7 +59,7 @@
                date_default_timezone_set("Asia/Manila");
                $current = date("Y-m-d H:i:s");
 
-               $record = "UPDATE time_record SET break_start = ? WHERE id = '1'";
+               $record = "UPDATE time_records SET break_start = ? WHERE user_id = $id";
                $stmt = $conn->prepare($record);
                $stmt->bind_param("s", $current);
                $stmt->execute();
@@ -56,7 +74,7 @@
                date_default_timezone_set("Asia/Manila");
                $current = date("Y-m-d H:i:s");
 
-               $record = "UPDATE time_record SET break_end = ? WHERE id = '1'";
+               $record = "UPDATE time_records SET break_end = ? WHERE user_id = $id";
                $stmt = $conn->prepare($record);
                $stmt->bind_param("s", $current);
                $stmt->execute();
@@ -71,7 +89,7 @@
                date_default_timezone_set("Asia/Manila");
                $current = date("Y-m-d H:i:s");
 
-               $record = "UPDATE time_record SET time_out = ? WHERE id = '1'";
+               $record = "UPDATE time_records SET time_out = ? WHERE user_id = $id";
                $stmt = $conn->prepare($record);
                $stmt->bind_param("s", $current);
                $stmt->execute();
@@ -85,8 +103,8 @@
             break;
       }
         
-         $in = $user['time_in'];
-         $out = $user['time_out'];
+         $in = $data['time_in'];
+         $out = $data['time_out'];
          
          $time_in = new DateTime($in);
          $time_out = new DateTime( $out);
@@ -94,42 +112,40 @@
          $formattedIn = $time_in->format('g:i A');
          $formattedOut = $time_out->format('g:i A');
 
-
-
          $interval = $time_in->diff($time_out);
-
-         
          $totalTime = ($interval->h + ($interval->days * 24)) . 'hrs ' . $interval->i . 'min';
-         $hours = $interval->h + ($interval->days * 24);
-         $minutes = $interval->i;
 
-         $days = floor($hours / 24);
-         $remainingHours = $hours % 24;
 
-         $remainingMinutes = $minutes;
+         // $hours = $interval->h + ($interval->days * 24);
+         // $minutes = $interval->i;
 
-         echo "<br><br>";
+         // $days = floor($hours / 24);
+         // $remainingHours = $hours % 24;
+
+         // $remainingMinutes = $minutes;
+
+         // echo "<br><br>";
          
-         echo "$days days $remainingHours hours $remainingMinutes mins";
+         // echo "$days days $remainingHours hours $remainingMinutes mins";
 
-         echo "<br><br>";
+         // echo "<br><br>";
          
-         echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min";
-         echo "<br><br>";
-         echo "In: " . $formattedIn . "<br>";
-         echo "Out: " . $formattedOut . "<br>";
+         // echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min";
+         // echo "<br><br>";
+         // echo "In: " . $formattedIn . "<br>";
+         // echo "Out: " . $formattedOut . "<br>";
 
          echo "Total Time ".$totalTime . "<br>";
       
 
 
+       
 
 
-
-               $records = "UPDATE time_record SET totaltime = ? WHERE id = '1'";
-               $stmt = $conn->prepare($records);
-               $stmt->bind_param("s", $totalTime);
-               $stmt->execute();
+         $records = "UPDATE time_records SET totalhours = ? WHERE user_id = ?";
+         $stmt = $conn->prepare($records);
+         $stmt->bind_param("ss", $totalTime, $id);
+         $stmt->execute();
          // echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min";
 
         
@@ -152,7 +168,7 @@
    ?>
 
 
-   <form action ="<?php $_SERVER['PHP_SELF']; ?>" method="post">
+   <form action ="<?php  $_SERVER['PHP_SELF']; ?>" method="post">
       <!-- <input type="text" name="time" value="<?php #echo $user['created_at'] ?>"> -->
       <!-- <input type="text" name="time" value="<?php #echo $current; ?>"> -->
       <!--       
@@ -166,11 +182,44 @@
       <button name = "val" value="bend">End</button>
       <button name = "val" value="tout">Out</button>
       <br><br>
-      <!-- <h3><?php #echo $user['time_in']; ?></h3> -->
+      <h3><?php #echo $user['time_in']; ?></h3>
       <h3><?php #echo "Total Time ".$totalTime ?></h3>
       <h3><?php #echo "Total Time with separate variable: " . $hours . "hrs " . $minutes . "min"; ?></h3>
       <h3><?php #echo $dbformatted; ?></h3>
       <h3><?php #echo $current; ?></h3>
    </form>
+   <table>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Full Name</th>
+        <th>Time In</th>
+        <th>Break Start</th>
+        <th>Break End</th>
+        <th>Time Out</th>
+        <th>totalhours</th>
+        
+       
+        <?php  
+       
+        if($result->num_rows > 0){
+         while($row = $result->fetch_assoc()){?>
+             <tr>
+           <td><?php echo $row['id']; ?></td>     
+           <td><?php echo $row['user_id']; ?></td>     
+           <td><?php echo $row['fullname']; ?></td>     
+           <td><?php echo $row['time_in']; ?></td>     
+           <td><?php echo $row['break_start']; ?></td>     
+           <td><?php echo $row['break_end']; ?></td>     
+           <td><?php echo $row['time_out']; ?></td>     
+           <td><?php echo $row['totalhours']; ?></td>     
+            </tr>
+            
+            
+        <?php } 
+            }
+
+        ?>    
+        
+    </table>
 </body>
 </html>
