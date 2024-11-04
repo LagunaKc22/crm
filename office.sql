@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2024 at 04:32 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Nov 04, 2024 at 09:54 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -41,7 +41,7 @@ CREATE TABLE `time_record` (
 --
 
 INSERT INTO `time_record` (`id`, `time_in`, `break_start`, `break_end`, `time_out`, `totaltime`) VALUES
-(1, '2024-10-01 21:12:39', '2024-11-02 18:31:51', '2024-11-01 21:31:03', '2024-11-02 11:58:30', '758hrs 45min'),
+(1, '2024-10-01 21:12:39', '2024-11-02 18:31:51', '2024-11-01 21:31:03', '2024-11-02 11:58:30', '0hrs 0min'),
 (46, '2024-11-02 12:06:38', '', '', '', ''),
 (47, '2024-11-02 12:07:31', '', '', '', ''),
 (48, '2024-11-02 18:49:17', '', '', '', ''),
@@ -52,7 +52,42 @@ INSERT INTO `time_record` (`id`, `time_in`, `break_start`, `break_end`, `time_ou
 (53, '2024-11-02 19:13:38', '', '', '', ''),
 (54, '2024-11-02 19:14:00', '', '', '', ''),
 (55, '2024-11-02 19:17:32', '', '', '', ''),
-(56, '2024-11-02 19:18:17', '', '', '', '');
+(56, '2024-11-02 19:18:17', '', '', '', ''),
+(57, '2024-11-04 11:51:47', '', '', '', ''),
+(58, '2024-11-04 12:29:46', '', '', '', ''),
+(59, '2024-11-04 12:32:58', '', '', '', ''),
+(60, '2024-11-04 12:33:31', '', '', '', ''),
+(61, '2024-11-04 12:33:47', '', '', '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `time_records`
+--
+
+CREATE TABLE `time_records` (
+  `id` int(11) NOT NULL,
+  `fullname` varchar(40) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `time_in` varchar(50) DEFAULT NULL,
+  `break_start` varchar(50) DEFAULT NULL,
+  `break_end` varchar(50) DEFAULT NULL,
+  `time_out` varchar(50) DEFAULT NULL,
+  `totalhours` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `time_records`
+--
+
+INSERT INTO `time_records` (`id`, `fullname`, `user_id`, `time_in`, `break_start`, `break_end`, `time_out`, `totalhours`) VALUES
+(32, 'admin admin', 5, '2024-11-04 13:58:29', '2024-11-04 13:59:52', '2024-11-04 13:59:27', '2024-11-04 13:59:31', '0hrs 1min'),
+(33, 'admin admin', 5, '2024-11-04 13:58:35', '2024-11-04 13:59:52', '2024-11-04 13:59:27', '2024-11-04 13:59:31', '0hrs 1min'),
+(34, 'admin admin', 5, '2024-11-04 13:58:43', '2024-11-04 13:59:52', '2024-11-04 13:59:27', '2024-11-04 13:59:31', '0hrs 1min'),
+(35, 'admin admin', 5, '2024-11-04 13:59:06', '2024-11-04 13:59:52', '2024-11-04 13:59:27', '2024-11-04 13:59:31', '0hrs 1min'),
+(36, 'admin admin', 5, '2024-11-04 13:59:17', '2024-11-04 13:59:52', '2024-11-04 13:59:27', '2024-11-04 13:59:31', '0hrs 1min'),
+(37, 'admin admin', 5, '2024-11-04 13:59:18', '2024-11-04 13:59:52', '2024-11-04 13:59:27', '2024-11-04 13:59:31', '0hrs 1min'),
+(38, 'admin admin', 5, '2024-11-04 13:59:18', '2024-11-04 13:59:52', '2024-11-04 13:59:27', '2024-11-04 13:59:31', '0hrs 1min');
 
 -- --------------------------------------------------------
 
@@ -94,6 +129,13 @@ ALTER TABLE `time_record`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `time_records`
+--
+ALTER TABLE `time_records`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -108,13 +150,29 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `time_record`
 --
 ALTER TABLE `time_record`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+
+--
+-- AUTO_INCREMENT for table `time_records`
+--
+ALTER TABLE `time_records`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `time_records`
+--
+ALTER TABLE `time_records`
+  ADD CONSTRAINT `time_records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
