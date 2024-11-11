@@ -3,28 +3,31 @@ include '../conn.php';
 include '../session/admin_session.php';
 include '../admin/variable.php';
 
-
+echo "User ID: $id, Today: $today, Fullname: $fullname"; // For debugging
 $results = $conn->query("SELECT * FROM tblstatus WHERE status_id = '1'");
 $rec = $results->fetch_assoc();
-
-
 
 $in = $rec['in_status'];
 $bs = $rec['bs_status'];
 $be = $rec['be_status'];
 $out = $rec['out_status'];
-
-
-
-
 $paddingin = $rec['btnpadin'];
 $paddingbs = $rec['btnpadbs'];
 $paddingbe = $rec['btnpadbe'];
 $paddingout = $rec['btnpadout'];
 
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnTime'])) {
     $btnVal = $_POST['btnTime'];
-    if ($btnVal == 'Time In'){
+    
+    
+$checking = $conn->query("SELECT * FROM time_records WHERE user_id = $id AND created_at = '$today'");
+if($checking->num_rows > 0){
+    $rows = $checking->fetch_assoc();
+    $time_id = $rows['id'];
+
+    if($btnVal == 'Time In'){
 
         $padin = '0';
         $padbs = '8';
@@ -39,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnTime'])) {
 
         $conn->query("UPDATE tblstatus SET in_status = '$btnin', bs_status = '$btnbs', be_status = '$btnbe', out_status = '$btnout'  WHERE status_id = '1'");
         $conn->query("UPDATE tblstatus SET btnpadin = '$padin', btnpadbs = '$padbs', btnpadbe = '$padbe', btnpadout = '$padout'  WHERE status_id = '1'");
-       header('location: style.php');
+        $conn->query("UPDATE time_records SET  time_in = '$intime' WHERE id = '$time_id'");
+       
+        header('location: style.php');
 
     } else if($btnVal == 'Break Start'){
         $padin = '0';
@@ -50,11 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnTime'])) {
         
         $btnin  = 'none';
         $btnbs  = 'none';
-        $btnbe  = 'inline-block';
+        $btnbe  = 'none';
         $btnout  = 'inline-block';
 
         $conn->query("UPDATE tblstatus SET in_status = '$btnin', bs_status = '$btnbs', be_status = '$btnbe', out_status = '$btnout'  WHERE status_id = '1'");
         $conn->query("UPDATE tblstatus SET btnpadin = '$padin', btnpadbs = '$padbs', btnpadbe = '$padbe', btnpadout = '$padout'  WHERE status_id = '1'");
+        $conn->query("UPDATE time_records SET break_start = '$bstime' WHERE id = $time_id");
+        
+        
         header('location: style.php');
     } else if($btnVal == 'Break End'){
         
@@ -67,25 +75,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnTime'])) {
         $btnbs = 'none';
         $btnbe = 'none';
         $btnout = 'inline-block';
+        
         $conn->query("UPDATE tblstatus SET in_status = '$btnin', bs_status = '$btnbs', be_status = '$btnbe', out_status = '$btnout'  WHERE status_id = '1'");
         $conn->query("UPDATE tblstatus SET btnpadin = '$padin', btnpadbs = '$padbs', btnpadbe = '$padbe', btnpadout = '$padout'  WHERE status_id = '1'");
+        $conn->query("UPDATE time_records SET break_end = '$betime' WHERE id = $time_id");
+
         header('location: style.php');
     } else if($btnVal == 'Time Out'){
         $padin = '8';
         $padbs = '0';
         $padbe = '0';
         $padout = '0';
-        
-        
-        
+         
         $btnin = 'inline-block';
         $btnbs = 'none';
         $btnbe = 'none';
         $btnout = 'none';
+
         $conn->query("UPDATE tblstatus SET in_status = '$btnin', bs_status = '$btnbs', be_status = '$btnbe', out_status = '$btnout'  WHERE status_id = '1'");
         $conn->query("UPDATE tblstatus SET btnpadin = '$padin', btnpadbs = '$padbs', btnpadbe = '$padbe', btnpadout = '$padout'  WHERE status_id = '1'");
+        $conn->query("UPDATE time_records SET time_out = '$outtime' WHERE id = $time_id");
+        
         header('location: style.php');
     }
+   
+
+}else{
+    if($btnVal == 'Time In'){
+        $conn->query("INSERT INTO time_records (user_id, fullname, time_in,created_at ) VALUES ('$id', '$fullname', '$now','$today')");
+    }
+}
     
     
     
