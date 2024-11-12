@@ -3,7 +3,7 @@ include '../conn.php';
 include '../session/admin_session.php';
 include '../admin/variable.php';
 
-echo "User ID: $id, Today: $today, Fullname: $fullname"; // For debugging
+// echo "User ID: $id, Today: $today, Fullname: $fullname"; // For debugging
 $results = $conn->query("SELECT * FROM tblstatus WHERE status_id = '1'");
 $rec = $results->fetch_assoc();
 
@@ -55,15 +55,14 @@ if($checking->num_rows > 0){
         
         $btnin  = 'none';
         $btnbs  = 'none';
-        $btnbe  = 'none';
-        $btnout  = 'inline-block';
+        $btnbe  = 'inline-block';
+        $btnout  = 'none';
 
         $conn->query("UPDATE tblstatus SET in_status = '$btnin', bs_status = '$btnbs', be_status = '$btnbe', out_status = '$btnout'  WHERE status_id = '1'");
         $conn->query("UPDATE tblstatus SET btnpadin = '$padin', btnpadbs = '$padbs', btnpadbe = '$padbe', btnpadout = '$padout'  WHERE status_id = '1'");
         $conn->query("UPDATE time_records SET break_start = '$bstime' WHERE id = $time_id");
         
-        
-        header('location: style.php');
+       header('location: style.php');
     } else if($btnVal == 'Break End'){
         
         $padin = '0';
@@ -91,23 +90,46 @@ if($checking->num_rows > 0){
         $btnbs = 'none';
         $btnbe = 'none';
         $btnout = 'none';
+        $x = '2024-11-12 18:03:00';
 
         $conn->query("UPDATE tblstatus SET in_status = '$btnin', bs_status = '$btnbs', be_status = '$btnbe', out_status = '$btnout'  WHERE status_id = '1'");
         $conn->query("UPDATE tblstatus SET btnpadin = '$padin', btnpadbs = '$padbs', btnpadbe = '$padbe', btnpadout = '$padout'  WHERE status_id = '1'");
-        $conn->query("UPDATE time_records SET time_out = '$outtime' WHERE id = $time_id");
+        $conn->query("UPDATE time_records SET time_out = '$x' WHERE id = $time_id");
         
+
+        $intime = new DateTime();
+        $x = new DateTime($x);
+        // $newtime_in = $intime;
+        // $newtime_out = $x;
+
+        $interval = $intime->diff($x);
+        $hrs = $interval->h;
+        $min = $interval->i;
+        $totalhrs = $hrs."hrs ". $min . "min";
+        $conn->query("UPDATE time_records SET totalhours = '$totalhrs' WHERE id='$time_id'");
+
+      
         header('location: style.php');
     }
    
 
 }else{
     if($btnVal == 'Time In'){
-        $conn->query("INSERT INTO time_records (user_id, fullname, time_in,created_at ) VALUES ('$id', '$fullname', '$now','$today')");
+        $conn->query("INSERT INTO time_records (user_id, fullname, time_in,created_at ) VALUES ('$id', '$fullname', '$intime','$today')");
+        header('location: style.php');
     }
+
+
+
+
 }
-    
-    
-    
+       
+
+
+           
+
+       
+           
     
     
    
@@ -153,3 +175,8 @@ if($checking->num_rows > 0){
         padding: <?php echo $paddingout."px"?>;
     }
 </style>
+
+<?php
+
+include '../admin/timetable.php';
+?>
